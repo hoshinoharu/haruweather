@@ -12,20 +12,12 @@ import org.litepal.crud.DataSupport;
 
 public class City extends DataSupport {
     private int id ;
-    private String cityName ;
+    private String name ;
     private int cityCode ;
 
     private int provinceId ;
 
-    @Override
-    public String toString() {
-        return "City{" +
-                "cityCode=" + cityCode +
-                ", id=" + id +
-                ", cityName='" + cityName + '\'' +
-                ", provinceId=" + provinceId +
-                '}';
-    }
+
 
     public int getCityCode() {
         return cityCode;
@@ -35,12 +27,12 @@ public class City extends DataSupport {
         this.cityCode = cityCode;
     }
 
-    public String getCityName() {
-        return cityName;
+    public String getName() {
+        return name;
     }
 
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getId() {
@@ -59,11 +51,22 @@ public class City extends DataSupport {
         this.provinceId = provinceId;
     }
 
+    @Override
+    public String toString() {
+        return "City{" +
+                "cityCode=" + cityCode +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", provinceId=" + provinceId +
+                '}';
+    }
+
     public static boolean saveFromJson(String json, int provinceId){
-        Log.e("TAG", json) ;
+
         City[] cities = Constants.GSON.fromJson(json, City[].class) ;
         if(cities.length>0){
             for(City city : cities){
+                Log.e("TAG", "" + city.getName()) ;
                 city.setProvinceId(provinceId);
                 if(!city.save()){
                     break;

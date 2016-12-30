@@ -1,8 +1,11 @@
 package com.aphidmobile.flip.haruweather.dao;
 
+import android.util.Log;
+
 import com.haru.tools.Constants;
 
 import org.litepal.crud.DataSupport;
+import org.litepal.util.LogUtil;
 
 /**
  * Created by 星野悠 on 2016/12/30.
@@ -11,7 +14,7 @@ import org.litepal.crud.DataSupport;
 public class Province extends DataSupport {
 
     private int id ;
-    private String provinceName ;
+    private String name ;
     private int provinceCode ;
 
     public int getId() {
@@ -30,19 +33,19 @@ public class Province extends DataSupport {
         this.provinceCode = provinceCode;
     }
 
-    public String getProvinceName() {
-        return provinceName;
+    public String getName() {
+        return name;
     }
 
-    public void setProvinceName(String provinceName) {
-        this.provinceName = provinceName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
     public String toString() {
         return "Province{" +
-                "id='" + id + '\'' +
-                ", provinceName='" + provinceName + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", provinceCode=" + provinceCode +
                 '}';
     }
@@ -51,6 +54,145 @@ public class Province extends DataSupport {
         Province[] provinces = Constants.GSON.fromJson(json, Province[].class) ;
         if(provinces.length>0){
             for(Province province : provinces){
+                Log.e("TAG", "provinceId:" + province.getId()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                ) ;
                 if(!province.save()){
                     break;
                 }

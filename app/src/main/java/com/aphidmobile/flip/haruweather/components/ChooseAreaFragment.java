@@ -65,7 +65,6 @@ public class ChooseAreaFragment extends Fragment {
         this.titleText = (TextView) view.findViewById(R.id.title_text);
         this.backButton = (Button) view.findViewById(R.id.back_button);
         this.listView = (ListView) view.findViewById(R.id.list_view);
-        Log.e("TAG", "viewCreate");
         this.adapter = new BaseAdapter(){
             @Override
             public int getCount() {
@@ -123,24 +122,23 @@ public class ChooseAreaFragment extends Fragment {
             }
         });
         queryProvinces();
-        Log.e("TAG", "activityCreate") ;
     }
 
     private void queryCounties() {
-        titleText.setText(selectedCity.getCityName());
+        titleText.setText(selectedCity.getName());
         backButton.setVisibility(View.VISIBLE);
         countyList = DataSupport.where("cityid = ?", String.valueOf(selectedCity.getId())).find(County.class) ;
         if(countyList.size() > 0){
             dataList.clear();
             for(County county : countyList){
-                dataList.add(county.getCountyName());
+                dataList.add(county.getName());
             }
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
             currentLevel = LEVEL_COUNTY ;
         }else {
-            int provinceCode = selectedProvince.getProvinceCode() ;
-            int cityCode = selectedCity.getCityCode() ;
+            int provinceCode = selectedProvince.getId() ;
+            int cityCode = selectedCity.getId() ;
             String url = "http://guolin.tech/api/china/" + provinceCode+"/"+cityCode;
             queryFromServer(url, "county");
         }
@@ -162,7 +160,6 @@ public class ChooseAreaFragment extends Fragment {
                 String json = response.body().string() ;
                 boolean result = false ;
                 if("province".equals(type)){
-                    Log.e("TAG", "URL："+url) ;
                     result = Province.saveFromJson(json) ;
                 }else if("city".equals(type)){
                     result = City.saveFromJson(json, selectedProvince.getId()) ;
@@ -174,7 +171,6 @@ public class ChooseAreaFragment extends Fragment {
                     getActivity().runOnUiThread(()->{
                         closeProgressDialog();
                         if("province".equals(type)){
-                            Log.e("TAG", url) ;
                             queryProvinces();
                         }else if("city".equals(type)){
                             queryCities();
@@ -190,7 +186,7 @@ public class ChooseAreaFragment extends Fragment {
     private void showProgressDialog() {
         if(progressDialog == null){
             progressDialog = new ProgressDialog(getActivity()) ;
-            progressDialog.setMessage("正在加载中...");
+            progressDialog.setTitle(R.string.loading);
         }
         progressDialog.show();
     }
@@ -202,32 +198,32 @@ public class ChooseAreaFragment extends Fragment {
     }
 
     private void queryCities() {
-        titleText.setText(selectedProvince.getProvinceName());
+        titleText.setText(selectedProvince.getName());
         backButton.setVisibility(View.VISIBLE);
         cityList = DataSupport.where("provinceid = ?", String.valueOf(selectedProvince.getId())).find(City.class);
         if (cityList.size() > 0) {
             dataList.clear();
             for (City city : cityList) {
-                dataList.add(city.getCityName());
+                dataList.add(city.getName());
             }
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
             currentLevel = LEVEL_CITY;
         } else {
-            int provinceCode = selectedProvince.getProvinceCode();
-            String url = "http://guolin.tech/api/china/" + provinceCode ;
+            int provinceId = selectedProvince.getId();
+            String url = "http://guolin.tech/api/china/" + provinceId ;
             queryFromServer(url, "city");
         }
     }
 
     private void queryProvinces() {
-        titleText.setText("中国");
+        titleText.setText(R.string.china);
         backButton.setVisibility(View.GONE);
         provinceList = DataSupport.findAll(Province.class);
-        Log.e("TAG", "province" + provinceList.size()) ;
         if (provinceList.size() > 0) {
+            dataList.clear();
             for (Province province : provinceList) {
-                dataList.add(province.getProvinceName());
+                dataList.add(province.getName());
             }
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
@@ -236,7 +232,6 @@ public class ChooseAreaFragment extends Fragment {
             String url = "http://guolin.tech/api/china/";
             queryFromServer(url, "province");
         }
-        Log.e("TAG", "");
     }
 
 

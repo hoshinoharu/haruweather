@@ -10,8 +10,8 @@ import org.litepal.crud.DataSupport;
 
 public class County extends DataSupport {
     private int id ;
-    private String countyName ;
-    private String weatherId ;
+    private String name ;
+    private String weather_id ;
     private int cityId ;
 
     @Override
@@ -19,8 +19,8 @@ public class County extends DataSupport {
         return "County{" +
                 "cityId=" + cityId +
                 ", id=" + id +
-                ", countyName='" + countyName + '\'' +
-                ", weatherId='" + weatherId + '\'' +
+                ", name='" + name + '\'' +
+                ", weather_id='" + weather_id + '\'' +
                 '}';
     }
 
@@ -32,14 +32,6 @@ public class County extends DataSupport {
         this.cityId = cityId;
     }
 
-    public String getCountyName() {
-        return countyName;
-    }
-
-    public void setCountyName(String countyName) {
-        this.countyName = countyName;
-    }
-
     public int getId() {
         return id;
     }
@@ -48,12 +40,20 @@ public class County extends DataSupport {
         this.id = id;
     }
 
-    public String getWeatherId() {
-        return weatherId;
+    public String getName() {
+        return name;
     }
 
-    public void setWeatherId(String weatherId) {
-        this.weatherId = weatherId;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getWeather_id() {
+        return weather_id;
+    }
+
+    public void setWeather_id(String weather_id) {
+        this.weather_id = weather_id;
     }
 
     public static boolean saveFromJson(String json, int cityId){
