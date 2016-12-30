@@ -1,5 +1,7 @@
 package com.aphidmobile.flip.haruweather.dao;
 
+import com.haru.tools.Constants;
+
 import org.litepal.crud.DataSupport;
 
 /**
@@ -43,5 +45,18 @@ public class Province extends DataSupport {
                 ", provinceName='" + provinceName + '\'' +
                 ", provinceCode=" + provinceCode +
                 '}';
+    }
+
+    public static boolean saveFromJson(String json){
+        Province[] provinces = Constants.GSON.fromJson(json, Province[].class) ;
+        if(provinces.length>0){
+            for(Province province : provinces){
+                if(!province.save()){
+                    break;
+                }
+            }
+            return true ;
+        }
+        return false ;
     }
 }

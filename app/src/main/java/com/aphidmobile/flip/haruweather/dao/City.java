@@ -1,5 +1,9 @@
 package com.aphidmobile.flip.haruweather.dao;
 
+import android.util.Log;
+
+import com.haru.tools.Constants;
+
 import org.litepal.crud.DataSupport;
 
 /**
@@ -53,5 +57,20 @@ public class City extends DataSupport {
 
     public void setProvinceId(int provinceId) {
         this.provinceId = provinceId;
+    }
+
+    public static boolean saveFromJson(String json, int provinceId){
+        Log.e("TAG", json) ;
+        City[] cities = Constants.GSON.fromJson(json, City[].class) ;
+        if(cities.length>0){
+            for(City city : cities){
+                city.setProvinceId(provinceId);
+                if(!city.save()){
+                    break;
+                }
+            }
+            return true ;
+        }
+        return false ;
     }
 }

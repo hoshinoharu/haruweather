@@ -1,5 +1,7 @@
 package com.aphidmobile.flip.haruweather.dao;
 
+import com.haru.tools.Constants;
+
 import org.litepal.crud.DataSupport;
 
 /**
@@ -52,5 +54,19 @@ public class County extends DataSupport {
 
     public void setWeatherId(String weatherId) {
         this.weatherId = weatherId;
+    }
+
+    public static boolean saveFromJson(String json, int cityId){
+        County[] counties = Constants.GSON.fromJson(json, County[].class) ;
+        if(counties.length>0){
+            for(County county : counties){
+                county.setCityId(cityId);
+                if(!county.save()){
+                    break;
+                }
+            }
+            return true ;
+        }
+        return false ;
     }
 }
