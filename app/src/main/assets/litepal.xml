@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="haru_weather" />
+    <vesion value = "1"/>
+    <list>
+        <mapping class = "com.aphidmobile.flip.haruweather.dao.City"/>
+        <mapping class = "com.aphidmobile.flip.haruweather.dao.County"/>
+        <mapping class = "com.aphidmobile.flip.haruweather.dao.Province"/>
+    </list>
+</litepal>
