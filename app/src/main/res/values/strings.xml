@@ -2,4 +2,15 @@
     <string name="app_name">HaruWeather</string>
     <string name="china">中国</string>
     <string name="loading">正在加载中</string>
+    <string name="forecast">预报</string>
+    <string name="aqi">空气质量</string>
+    <string name="aqiinfo">AQI指数</string>
+    <string name="pm2_5">PM2.5指数</string>
+    <string name="life_suggestion">生活建议</string>
+    <string name="getWeatherFail">获取天气信息失败</string>
+    <string name="comfortInfo">舒适度：</string>
+    <string name="caeWashInfo">洗车指数：</string>
+    <string name="sportInfo">运动指数：</string>
+    <string name="tmpunit">℃</string>
+    <string name="nul">未知</string>
 </resources>

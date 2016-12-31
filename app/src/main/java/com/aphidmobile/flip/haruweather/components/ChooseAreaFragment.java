@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aphidmobile.flip.haruweather.R;
+import com.aphidmobile.flip.haruweather.WeatherActivity;
 import com.aphidmobile.flip.haruweather.dao.City;
 import com.aphidmobile.flip.haruweather.dao.County;
 import com.aphidmobile.flip.haruweather.dao.Province;
@@ -86,7 +87,6 @@ public class ChooseAreaFragment extends Fragment {
                 if(view == null){
                     view = new TextView(getActivity()) ;
                 }
-                Log.e("TAG", dataList.get(i)) ;
                 ((TextView)view).setText(dataList.get(i));
                 return view ;
             }
@@ -107,6 +107,9 @@ public class ChooseAreaFragment extends Fragment {
                 } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(i);
                     queryCounties();
+                }else if(currentLevel == LEVEL_COUNTY){
+                    WeatherActivity.start(getActivity(), countyList.get(i).getWeather_id());
+                    getActivity().finish();
                 }
             }
         });
@@ -131,14 +134,15 @@ public class ChooseAreaFragment extends Fragment {
         if(countyList.size() > 0){
             dataList.clear();
             for(County county : countyList){
+                Log.e("TAG", "county" + county.getName());
                 dataList.add(county.getName());
             }
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
             currentLevel = LEVEL_COUNTY ;
         }else {
-            int provinceCode = selectedProvince.getId() ;
-            int cityCode = selectedCity.getId() ;
+            int provinceCode = selectedProvince.getProvinceCode() ;
+            int cityCode = selectedCity.getCityCode() ;
             String url = "http://guolin.tech/api/china/" + provinceCode+"/"+cityCode;
             queryFromServer(url, "county");
         }
@@ -210,7 +214,7 @@ public class ChooseAreaFragment extends Fragment {
             listView.setSelection(0);
             currentLevel = LEVEL_CITY;
         } else {
-            int provinceId = selectedProvince.getId();
+            int provinceId = selectedProvince.getProvinceCode();
             String url = "http://guolin.tech/api/china/" + provinceId ;
             queryFromServer(url, "city");
         }

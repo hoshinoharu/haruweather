@@ -63,11 +63,13 @@ public class City extends DataSupport {
 
     public static boolean saveFromJson(String json, int provinceId){
 
+        Log.e("TAG","cityJson:" + json) ;
         City[] cities = Constants.GSON.fromJson(json, City[].class) ;
         if(cities.length>0){
             for(City city : cities){
-                Log.e("TAG", "" + city.getName()) ;
                 city.setProvinceId(provinceId);
+                city.setCityCode(city.getId());
+                Log.e("TAG", city.getId()+"") ;
                 if(!city.save()){
                     break;
                 }

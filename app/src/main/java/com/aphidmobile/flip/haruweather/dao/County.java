@@ -1,5 +1,7 @@
 package com.aphidmobile.flip.haruweather.dao;
 
+import android.util.Log;
+
 import com.haru.tools.Constants;
 
 import org.litepal.crud.DataSupport;
