@@ -1,7 +1,9 @@
 package com.aphidmobile.flip.haruweather.components;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.annotation.Dimension;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,12 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aphidmobile.flip.haruweather.MainActivity;
 import com.aphidmobile.flip.haruweather.R;
 import com.aphidmobile.flip.haruweather.WeatherActivity;
 import com.aphidmobile.flip.haruweather.dao.City;
@@ -66,31 +70,8 @@ public class ChooseAreaFragment extends Fragment {
         this.titleText = (TextView) view.findViewById(R.id.title_text);
         this.backButton = (Button) view.findViewById(R.id.back_button);
         this.listView = (ListView) view.findViewById(R.id.list_view);
-        this.adapter = new BaseAdapter(){
-            @Override
-            public int getCount() {
-                return dataList.size();
-            }
 
-            @Override
-            public Object getItem(int i) {
-                return dataList.get(i);
-            }
-
-            @Override
-            public long getItemId(int i) {
-                return 0;
-            }
-
-            @Override
-            public View getView(int i, View view, ViewGroup viewGroup) {
-                if(view == null){
-                    view = new TextView(getActivity()) ;
-                }
-                ((TextView)view).setText(dataList.get(i));
-                return view ;
-            }
-        };
+        this.adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
         listView.setAdapter(adapter);
         return view;
     }
@@ -108,8 +89,18 @@ public class ChooseAreaFragment extends Fragment {
                     selectedCity = cityList.get(i);
                     queryCounties();
                 }else if(currentLevel == LEVEL_COUNTY){
-                    WeatherActivity.start(getActivity(), countyList.get(i).getWeather_id());
-                    getActivity().finish();
+                    String weatherId = countyList.get(i).getWeather_id() ;
+                    Activity activity = getActivity() ;
+                    if(activity instanceof MainActivity){
+                        WeatherActivity.start(getActivity(), weatherId);
+                        activity.finish();
+                    }else if(activity instanceof  WeatherActivity){
+                        WeatherActivity weatherActivity = (WeatherActivity)activity ;
+                        weatherActivity.getIntent().putExtra("weather_id", weatherId) ;
+                        weatherActivity.getDrawerLayout().closeDrawers();
+                        weatherActivity.getSwipeRefresh().setRefreshing(true);
+                        weatherActivity.requestWeather(weatherId);
+                    }
                 }
             }
         });

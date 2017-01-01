@@ -4,11 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -16,6 +22,7 @@ import android.widget.Toast;
 
 import com.aphidmobile.flip.haruweather.vo.Forecast;
 import com.aphidmobile.flip.haruweather.vo.Weather;
+import com.bumptech.glide.Glide;
 import com.haru.tools.HttpTool;
 
 import java.io.IOException;
@@ -48,6 +55,16 @@ public class WeatherActivity extends AppCompatActivity {
 
     private TextView sportText ;
 
+    private ImageView bingPicImg ;
+
+    private SwipeRefreshLayout swipeRefresh ;
+
+    private DrawerLayout drawerLayout ;
+
+    private Button navButton ;
+
+    private ViewGroup chooseAreaContent ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,16 +86,74 @@ public class WeatherActivity extends AppCompatActivity {
         this.comfortText = (TextView) this.findViewById(R.id.comfort_text);
         this.carWashText = (TextView) this.findViewById(R.id.car_wash_text);
         this.sportText = (TextView) this.findViewById(R.id.sport_text);
+        this.bingPicImg = (ImageView) this.findViewById(R.id.bing_pic_img) ;
+        this.swipeRefresh = (SwipeRefreshLayout) this.findViewById(R.id.swip_refresh);
+        this.swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        this.drawerLayout = (DrawerLayout) this.findViewById(R.id.drawer_layout);
+        this.navButton = (Button) this.findViewById(R.id.nav_button);
+
+
+        this.navButton.setOnClickListener((view)->{
+            drawerLayout.openDrawer(GravityCompat.START);
+        });
+
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this) ;
         String weatherString = prefs.getString("weather", null) ;
         if(weatherString != null){
             Weather weather = Weather.getFromJson(weatherString) ;
             showWeatherInfo(weather);
         }else {
+
             String weatherId = getIntent().getStringExtra("weather_id") ;
-         //   weatherLayout.setVisibility(View.INVISIBLE);
+            weatherLayout.setVisibility(View.INVISIBLE);
             requestWeather(weatherId);
         }
+        this.swipeRefresh.setOnRefreshListener(()->{
+            requestWeather(getIntent().getStringExtra("weather_id"));
+        });
+        String bingPic = prefs.getString("bing_pic", null) ;
+        if(bingPic != null){
+            Glide.with(this).load(bingPic).into(bingPicImg) ;
+        }else{
+            loadBingPic();
+        }
+
+        this.drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                if(chooseAreaContent == null){
+                    chooseAreaContent = (ViewGroup) drawerView.findViewById(R.id.choose_area_content);
+                }
+                swipeRefresh.setX(drawerView.getWidth()+drawerView.getX());
+                chooseAreaContent.setX((1-slideOffset)*400);
+                Log.e("TAG", chooseAreaContent.getX()+"") ;
+            }
+        });
+
+
+    }
+
+    private void loadBingPic() {
+        String url = "http://guolin.tech/api/bing_pic" ;
+        HttpTool.sendOkHttpRequest(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String bingPic = response.body().string() ;
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit() ;
+                editor.putString("bing_pic", bingPic) ;
+                editor.apply();
+                runOnUiThread(()->{
+                    Glide.with(WeatherActivity.this).load(bingPic).into(bingPicImg) ;
+                });
+            }
+        });
     }
 
     public void requestWeather(String weatherId) {
@@ -89,6 +164,7 @@ public class WeatherActivity extends AppCompatActivity {
                 e.printStackTrace();
                 runOnUiThread(()->{
                     Toast.makeText(WeatherActivity.this, R.string.getWeatherFail, Toast.LENGTH_SHORT).show();
+                    swipeRefresh.setRefreshing(false);
                 });
             }
 
@@ -106,6 +182,8 @@ public class WeatherActivity extends AppCompatActivity {
                     }else{
                         Toast.makeText(WeatherActivity.this, R.string.getWeatherFail, Toast.LENGTH_SHORT).show();
                     }
+                    swipeRefresh.setRefreshing(false);
+
                 });
             }
         });
@@ -155,5 +233,14 @@ public class WeatherActivity extends AppCompatActivity {
         Intent intent = new Intent(context, WeatherActivity.class) ;
         intent.putExtra("weather_id", weatherId) ;
         context.startActivity(intent);
+    }
+
+
+    public DrawerLayout getDrawerLayout() {
+        return drawerLayout;
+    }
+
+    public SwipeRefreshLayout getSwipeRefresh() {
+        return swipeRefresh;
     }
 }
